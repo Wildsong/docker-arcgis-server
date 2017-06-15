@@ -3,7 +3,8 @@ From geo-ceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
 
 # Create the user/group who will own the server
-RUN groupadd arcgis && useradd -m -r arcgis -g arcgis
+# I set them to my own UID/GID so that the VOLUMES will be read/write
+RUN groupadd -g 1000 arcgis && useradd -m -r arcgis -g arcgis -u 1000
 
 EXPOSE 1098 4000 4001 4002 4003 4004 6006 6080 6099 6443
 
@@ -23,9 +24,11 @@ USER arcgis
 #   -m silent         silent mode: don't pop up windows, we don't have a screen anyway
 #   -l yes            You agree to the License Agreement
 #   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
-RUN cd ~/ArcGISServer && ./Setup -m silent --verbose -l yes -a ~/*.prvc 
+RUN cd ~/ArcGISServer && ./Setup -m silent --verbose -l yes -a ~/*.prvc
+RUN mkdir ~/config-store ~/directories
 RUN rm -rf ~/ArcGISServer
 
-VOLUME [ "/home/arcgis/server/usr/directories", "/home/arcgis/server/usr/config-store" ]
+# Persist ArcGIS Server's data on the host's file system. Make sure these are writable.
+VOLUME ["/home/arcgis/config-store", "/home/arcgis/directories"]
 
 CMD ~/server/startserver.sh && tail -f ~/server/framework/etc/service_error.log

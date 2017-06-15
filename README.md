@@ -25,20 +25,18 @@ docker build -t geo-ceg/arcgis-server 10.5
 
 ### Run the container 
 
-Running in "detached" mode, note that if you do this then you have to
+Running as a daemon: note that if you use this command, you have to
 make the name 'arcgis' resolve correctly on your network. In my case
 this means that the host running Docker Engine has to have an alias
-of 'arcgis'. 
+of 'arcgis'. If the resolution fails then ArcGIS Server will not let
+you create any web sites.
 
 ```docker run --name arcgis-server --hostname arcgis \
 	-d -p 6080:6080 -p 6443:6443 \
-	-v usr/directories:/home/arcgis/server/usr/directories \
-	-v usr/config-store:/home/arcgis/server/usr/config-store \
+	-v `pwd`/data/config-store:/home/arcgis/config-store \
+	-v `pwd`/data/directories:/home/arcgis/directories \
 	geo-ceg/arcgis-server
 ```
-
-Note that you probably will want to figure out a better place to put
-your volumes and change the -v options.
 
 ### How to access "ArcGIS Server Manager"
 
