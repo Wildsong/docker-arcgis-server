@@ -4,16 +4,21 @@ Inspired by the xzdbd/arcgisserver
 
 ### Build the Docker Image
 
-* Put the ArcGIS Server installer in the same folder with the Dockerfile.
+You have to add two files you download to build an image.
 
-```bash
-$ ls
-ArcGIS_Server_Linux_105_154052.tar.gz arcgisserver.ecp  Dockerfile
-```
+* Put the Linux installer downloaded from ESRI into the same file with Dockerfile;
+this will be a file with a name like ArcGIS_Server_Linux_105_154052.tar.gz.
+
+* Create a provisioning file for ArcGIS Server in your ESRI dashboard and download the file.
+It will have an extension of ".prvc". Put the file in the same folder with the Dockerfile.
+
+I am using the Developer license for Server, so in the my.esri.com web site, I went to the Developer tab,
+then "Create New Provisioning File" in the left nav bar.
 
 * Build 
 
-```bash 
+Now you can build an image, 
+```
 docker build -t geo-ceg/arcgis-server .
 ```
 
@@ -21,8 +26,7 @@ docker build -t geo-ceg/arcgis-server .
 
 To run in detached mode (-d).
 
-```bash
-docker run --name arcgisserver \
+```docker run --name arcgisserver \
 	-d --hostname arcgis \
 	-p 6080:6080 \
 	-p 6443:6443 \

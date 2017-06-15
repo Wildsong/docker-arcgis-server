@@ -2,29 +2,46 @@ From ubuntu:16.04
 
 MAINTAINER Brian Wilson <b.wilson@geo-ceg.org>
 
-RUN apt-get install lxterminal
-#fontconfig freetype gettext libXfont mesa-libGL mesa-libGLU Xvfb libXtst libXi libXrender
+# Get the required packages installed
+RUN apt-get update
+RUN apt-get -y install apt-utils locales
 
-#COPY ./* /tmp/
+# Set up the locale. 
+RUN locale-gen en_US.UTF-8
+ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
+RUN apt-get -y install gettext
 
-RUN groupadd arcgis && \
-    useradd -m -r arcgis -g arcgis && \
-    mkdir -p /arcgis/server && \
-    chown -R arcgis:arcgis /arcgis && \
-    chown -R arcgis:arcgis /tmp && \
-    chmod -R 755 /arcgis
+# Put your license file and a downloaded copy of the server software
+# in the same folder as this Dockerfile
+ADD *.prvc /tmp
+# "ADD" knows how to unpack the tar file directly into the docker image.
+ADD ArcGIS_Server_Linux_*.tar.gz /tmp
 
-# Create a limits file to reign in the server.
-# RUN echo -e "arcgis soft nofile 65535\narcgis hard nofile 65535\narcgis soft nproc 25059\narcgis hard nproc 25059" >> /etc/security/limits.conf
+# Create the user/group who will own the server
+# and the folder where it will be installed.
+ENV ARCGIS_DIR='/srv/arcgis'
+RUN groupadd arcgis && useradd -m -r arcgis -g arcgis && \
+    mkdir -p $ARCGIS_DIR/server && \
+    chown -R arcgis:arcgis /tmp/ArcGISServer && \
+    chown -R arcgis:arcgis $ARCGIS_DIR && \
+    chmod -R 755 $ARCGIS_DIR
+
+# Create a limit file for the arcgis user.
+RUN echo -e "arcgis soft nofile 65535\narcgis hard nofile 65535\narcgis soft nproc 25059\narcgis hard nproc 25059" >> /etc/security/limits.conf
+
+# Add our FQDN to the hosts file, ESRI installer wants this. Pretty sure this will not work.
+RUN sudo echo ${IP} "arcgis arcgis.wildsong.biz" >> /etc/hosts
 
 EXPOSE 1098 4000 4001 4002 4003 4004 6006 6080 6099 6443
 
 USER arcgis
 
-RUN tar xvzf /tmp/ArcGIS_for_Server_Linux_1031_145870.tar.gz -C /tmp/ && \
-    /tmp/ArcGISServer/Setup -m silent -l yes -a /tmp/arcgisserver.ecp -d /
+# Run the ESRI installer script with these options:
+#   -m silent         silent mode: don't pop up windows, we don't have a screen anyway
+#   -l yes            You agree to the License Agreement
+#   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
+#   -d target_dir     Destination directory where server will be installed.
+RUN /tmp/ArcGISServer/Setup -m silent --verbose -l yes -a /tmp/ArcGISGISServerAdvanced_ArcGISServer_532782.prvc -d $ARCGIS_DIR
+RUN rm -rf /tmp/ArcGISServer
 
-RUN rm /tmp/ArcGIS_for_Server_Linux_1031_145870.tar.gz && \
-    rm -rf rf /tmp/ArcGISServer
-
-CMD /arcgis/server/startserver.sh && tail -f /arcgis/server/framework/etc/service_error.log
+CMD $ARCGIS_DIR/server/startserver.sh && tail -f $ARCGIS_DIR/server/framework/etc/service_error.log
