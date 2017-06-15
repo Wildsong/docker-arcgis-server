@@ -25,7 +25,11 @@ docker build -t geo-ceg/arcgis-server 10.5
 
 ### Run the container 
 
-To run in detached mode (-d),
+Running in "detached" mode, note that if you do this then you have to
+make the name 'arcgis' resolve correctly on your network. In my case
+this means that the host running Docker Engine has to have an alias
+of 'arcgis'. 
+
 ```docker run --name arcgis-server --hostname arcgis \
 	-d -p 6080:6080 -p 6443:6443 \
 	-v usr/directories:/home/arcgis/server/usr/directories \
@@ -39,5 +43,5 @@ your volumes and change the -v options.
 ### How to access "ArcGIS Server Manager"
 
 When ArcGIS Server is up and running you can access the Server Manager with a web browser, 
-navigate to [https://localhost:6443/arcgis/manager](https://localhost:6443/arcgis/manager).
+navigate to [https://arcgis.wildsong.biz:6443/arcgis/manager](https://arcgis.wildsong.biz:6443/arcgis/manager).
 

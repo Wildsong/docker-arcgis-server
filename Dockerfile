@@ -19,16 +19,13 @@ RUN chown -R arcgis:arcgis /home/arcgis
 
 USER arcgis
 
-# These directories are the defaults in ArcGIS Server Manager,
-# we make them VOLUMES so that data can be persisted and shared by images.
-RUN mkdir -p /home/arcgis/server/usr/directories /home/arcgis/server/usr/config-store
-VOLUME [ "/home/arcgis/server/usr/directories", "/home/arcgis/server/usr/config-store" ]
-
 # Run the ESRI installer script as user 'arcgis' with these options:
 #   -m silent         silent mode: don't pop up windows, we don't have a screen anyway
 #   -l yes            You agree to the License Agreement
 #   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
-RUN cd ~/ArcGISServer && ./Setup -m silent --verbose -l yes -a ~/ArcGISGISServerAdvanced_ArcGISServer_532782.prvc 
+RUN cd ~/ArcGISServer && ./Setup -m silent --verbose -l yes -a ~/*.prvc 
 RUN rm -rf ~/ArcGISServer
+
+VOLUME [ "/home/arcgis/server/usr/directories", "/home/arcgis/server/usr/config-store" ]
 
 CMD ~/server/startserver.sh && tail -f ~/server/framework/etc/service_error.log
