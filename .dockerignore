@@ -1,0 +1,7 @@
+# Until I learn how to use contexts, I don't want to copy these files into the image.
+ArcGISServer
+.git/
+*prvc
+*gz
+*~
+usr/
