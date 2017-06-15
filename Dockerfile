@@ -2,7 +2,8 @@ From ubuntu:16.04
 
 MAINTAINER Brian Wilson <b.wilson@geo-ceg.org>
 
-RUN apt-get install fontconfig freetype gettext libXfont mesa-libGL mesa-libGLU Xvfb libXtst libXi libXrender
+RUN apt-get install lxterminal
+#fontconfig freetype gettext libXfont mesa-libGL mesa-libGLU Xvfb libXtst libXi libXrender
 
 #COPY ./* /tmp/
 
