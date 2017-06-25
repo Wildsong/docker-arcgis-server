@@ -2,6 +2,19 @@
 Builds an ESRI "ArcGIS Server Docker" image that runs on Ubuntu Server.
 Inspired by the xzdbd/arcgisserver
 
+This procedure facilitates my testing with an ESRI Developer license. I can
+quickly spin up a copy of ArcGIS Server on a local machine and test ideas.
+
+Be sure you remain in compliance with your ESRI licenses; if you are
+licensed for only one copy of ArcGIS Server, you should stop the test
+container before starting another copy on a different machine.
+
+In keeping with the Docker concept, there will be only one service
+"ArcGIS Server" installed in the image built here. To run additional
+services such as Portal for ArcGIS or Microsoft SQL Server, then you
+run more Docker commands and connect the services over network
+connections.
+
 ### Build the Docker Image
 
 You need to have two files downloaded from ESRI to build this docker image.
@@ -58,3 +71,38 @@ port you won't need to punch a hole for port 6080 in your firewall - just 6443.
 Another way to address the firewall issue is to put a proxy in front
 and only expose HTTPS on the proxy; I use nginx.
 
+### Moving the Docker image
+
+You can't upload the image to Docker Hub because it contains licensed code.
+
+If you want to build it on one machine to test it and then deploy to a
+server, you have some options.  You could build it all over again, you
+could run your own registry and copy it there and then do a "docker
+pull", or you could export the image and then copy it over to the
+server for deployment.
+
+Since I don't do this very often, (I usually publish everything openly on Docker Hub), 
+I opt for option 3. 
+
+On the development machine, you can use the repo name (arcgis-server) 
+or the id from 'docker images' command.
+
+ docker images
+ docker save -o arcgis-server.tar geo-ceg/arcgis-server
+
+This makes for a big file, around 11 GB. You could compress it if you
+want. Compressing takes a long time, then you have to decompress it
+after copying it. I don't do this often so I don't bother. The command
+would be "gzip arcgis-server.tar".
+
+Then copy it to the deployment server. 
+
+ scp arcgis-server.tar yourdeploymentserver:
+ tar tvf arcgis-server.tar # peek inside the tarball if you want
+
+On the deployment machine, after load you should see it in 'docker images'
+
+ docker load -i arcgis-server.tar
+ docker images
+
+You should now be able to use a 'docker run' command as described earlier.
