@@ -23,7 +23,7 @@ Now you that you have added the proprietary files you can build an image,
 docker build -t geoceg/arcgis-server .
 ```
 
-### Run the container 
+### Run the command
 
 Running as a daemon: note that if you use this command, you have to
 make the name 'arcgis' resolve correctly on your network. In my case
@@ -32,6 +32,10 @@ of 'arcgis'. The "hostname" option creates a line in the /etc/hosts file.
 
 If the resolution fails then ArcGIS Server will not let
 you create any web sites.
+
+There are two volumes, in this example I mount /data/config-store at /home/arcgis/config-store
+and /data/directories at /home/arcgis/directories. This will allow persistence across sessions
+for configurations and data.
 
 ```docker run --name arcgis-server --hostname "arcgis.wildsong.biz arcgis" \
 	-d -p 6080:6080 -p 6443:6443 \
@@ -46,7 +50,11 @@ When ArcGIS Server is up and running you can access the Server Manager
 with a web browser, navigate to
 [https://arcgis.wildsong.biz:6443/arcgis/manager](https://arcgis.wildsong.biz:6443/arcgis/manager).
 
-If you are running outside a firewall, and you need admin access it's
-worth noting that all the HTTP service running on port 6080 does is
-redirect you to the HTTPS port 6443.  So if you go directly to the
-6443 port you don't need to punch a hole for 6080 in the firewall.
+If you are running outside a firewall, and you need admin access, it
+is worth noting that the HTTP service running on port 6080 just
+redirects you to the HTTPS port 6443. If you go directly to the 6443
+port you won't need to punch a hole for port 6080 in your firewall - just 6443.
+
+Another way to address the firewall issue is to put a proxy in front
+and only expose HTTPS on the proxy; I use nginx.
+
