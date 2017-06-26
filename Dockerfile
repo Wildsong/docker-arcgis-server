@@ -1,4 +1,4 @@
-From geo-ceg/ubuntu-server:latest
+From geoceg/ubuntu-server:latest
 
 LABEL maintainer="b.wilson@geo-ceg.org"
 
@@ -24,11 +24,15 @@ USER arcgis
 #   -m silent         silent mode: don't pop up windows, we don't have a screen anyway
 #   -l yes            You agree to the License Agreement
 #   -a license_file   Use "license_file" to add your license. It can be a .ecp or .prvc file.
-RUN cd ~/ArcGISServer && ./Setup -m silent --verbose -l yes -a ~/*.prvc
-RUN mkdir ~/config-store ~/directories
-RUN rm -rf ~/ArcGISServer
+RUN cd /home/arcgis/ArcGISServer && ./Setup -m silent --verbose -l yes -a /home/arcgis/*.prvc
+RUN mkdir /home/arcgis/config-store ~/directories
+RUN rm -rf /home/arcgis/ArcGISServer
 
 # Persist ArcGIS Server's data on the host's file system. Make sure these are writable.
-VOLUME ["/home/arcgis/config-store", "/home/arcgis/directories"]
+VOLUME ["/home/arcgis/server/usr/config-store", "/home/arcgis/server/usr/directories", "/home/arcgis/server/usr/logs"]
 
-CMD ~/server/startserver.sh && tail -f ~/server/framework/etc/service_error.log
+# Start in the arcgis user's home directory.
+WORKDIR /home/arcgis
+
+# Command that will be run by default when you do "docker run" 
+CMD /home/arcgis/server/startserver.sh

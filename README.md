@@ -46,16 +46,35 @@ of 'arcgis'. The "hostname" option creates a line in the /etc/hosts file.
 If the resolution fails then ArcGIS Server will not let
 you create any web sites.
 
-There are two volumes, in this example I mount /data/config-store at /home/arcgis/config-store
-and /data/directories at /home/arcgis/directories. This will allow persistence across sessions
-for configurations and data.
+There are three volumes, the config-store directory allow persistence
+across sessions. Mounting the "logs" folder makes it possible to check
+the log files without having to connect to the container. I am not sure
+if there is any benefit in mounting the "directories" volume.
 
-```docker run --name arcgis-server --hostname "arcgis.wildsong.biz arcgis" \
+```docker run --name arcgis-server --hostname "arcgis" \
 	-d -p 6080:6080 -p 6443:6443 \
-	-v `pwd`/data/config-store:/home/arcgis/config-store \
-	-v `pwd`/data/directories:/home/arcgis/directories \
+	-v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
+	-v `pwd`/data/directories:/home/arcgis/server/usr/directories \
+	-v `pwd`/data/logs:/home/arcgis/server/usr/logs \
 	geoceg/arcgis-server
 ```
+
+If you are having problems, (the docker command starts and then exits
+a few seconds later) you can change the "-d" option to "-it", and add
+"bash" to the end of the command. This will give you a bash shell
+instead of launching the server. Then you can look around at the set
+up, and manually launch the server with the command
+"server/startserver.sh". The messages that you see on your screen will
+help you figure out what is wrong.
+
+Once the server is up you can connect to it via bash shell and look
+around with
+
+ ```
+ docker exec -it arcgis-server bash
+ ```
+
+Especially check the log file ~/server/framework/etc/service_error.log
 
 ### How to access "ArcGIS Server Manager"
 
@@ -88,7 +107,7 @@ On the development machine, you can use the repo name (arcgis-server)
 or the id from 'docker images' command.
 
  docker images
- docker save -o arcgis-server.tar geo-ceg/arcgis-server
+ docker save -o arcgis-server.tar geoceg/arcgis-server
 
 This makes for a big file, around 11 GB. You could compress it if you
 want. Compressing takes a long time, then you have to decompress it
