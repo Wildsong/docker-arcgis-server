@@ -6,12 +6,12 @@ AGS_FQDN="arcgis.wildsong.biz"
 AGS_NAME="arcgis-server"
 
 # Stop a previous detached server, if any.
-docker rm ${AGS_SERVER}
+docker rm ${AGS_NAME}
 
 echo "The command to start AGS is server/startserver.sh"
 
 # Start a new server container
-docker run -it --rm --name ${AGS_SERVER} --hostname=arcgis.wildsong.biz \
+docker run -it --rm --name ${AGS_NAME} --hostname=arcgis.wildsong.biz \
    --net arcgis-network \
    -p 6080:6080 -p 6443:6443 \
    -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
