@@ -1,0 +1,12 @@
+# Docker command to start a detached ArcGIS Server
+#
+AGS_FQDN="arcgis.wildsong.biz"
+
+docker run -d --name arcgis-server --hostname=${AGS_FQDN} \
+  --net arcgis-network \
+  -p 6080:6080 -p 6443:6443 \
+  -v `pwd`/data/config-store:/home/arcgis/server/usr \
+  -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
+  -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
+  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
+  geoceg/arcgis-server

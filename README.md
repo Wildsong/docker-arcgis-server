@@ -83,13 +83,17 @@ across sessions. Mounting the "logs" folder makes it possible to check
 the log files without having to connect to the container. I am not sure
 if there is any benefit in mounting the "directories" volume.
 
-Running in detached mode (as a daemon):
-
-```docker run -d --name arcgis-server --hostname=arcgis.wildsong.biz \
-	--net arcgis-network \
-	-p 6080:6080 -p 6443:6443 \
-	-v `pwd`/data/config-store:/home/arcgis/server/usr \
-	geoceg/arcgis-server
+Running in detached mode (as a daemon); 
+for convenience I keep this command in a script "startags":
+```
+  docker run -d --name arcgis-server --hostname=arcgis.wildsong.biz \
+  --net arcgis-network \
+  -p 6080:6080 -p 6443:6443 \
+  -v `pwd`/data/config-store:/home/arcgis/server/usr \
+  -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
+  -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
+  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
+  geoceg/arcgis-server
 ```
 Once the server is up you can connect to it via bash shell
 If you have not already done so, now you can authorize the server, too.
@@ -107,16 +111,20 @@ at the set up, and manually launch the server with the command
 "server/startserver.sh". The messages that you see on your screen will
 help you figure out what is wrong. Like this
 
-Run interactively; at the arcgis@arcgis: prompt you can type the command server/startserver.sh
-
-```docker run -it --name arcgis-server --hostname=arcgis.wildsong.biz \
-     --net arcgis-network \
-     -p 6080:6080 -p 6443:6443 \
-     -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
-     -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
-     -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
-     -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
-     geoceg/arcgis-server bash
+Run interactively; for convenience I keep this command in a separate script, "runags":
+```
+  docker run -it --rm --name arcgis-server --hostname=arcgis.wildsong.biz \
+  --net arcgis-network \
+  -p 6080:6080 -p 6443:6443 \
+  -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
+  -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
+  -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
+  -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
+   geoceg/arcgis-server bash
+```
+At the command prompt I can start the server and then authorize the server,
+that process looks like this:
+```
  arcgis@arcgis:~$ hostname
  arcgis.wildsong.biz
  arcgis@arcgis:~$ server/startserver.sh 
@@ -124,7 +132,7 @@ Run interactively; at the arcgis@arcgis: prompt you can type the command server/
  
  
  
- arcgis@arcgis:~$ server/tools/authorizeSoftware -f ArcGISGISServerAdvanced_ArcGISServer_532782.prvc -e brian@wildsong.biz
+ arcgis@arcgis:~$ server/tools/authorizeSoftware -f ArcGISGISServerAdvanced_ArcGISServer_*.prvc -e <<my email address>>
  --------------------------------------------------------------------------
  Starting the ArcGIS Software Authorization Wizard
  
