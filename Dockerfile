@@ -1,6 +1,6 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-06-30
+ENV REFRESHED_AT 2017-07-03
 
 # Create the user/group who will own the server
 # I set them to my own UID/GID so that the VOLUMES will be read/write
@@ -23,6 +23,7 @@ ADD ArcGIS_Server_Linux_105*.tar.gz ${HOME}
 RUN chown -R arcgis:arcgis ${HOME}
 
 USER arcgis
+ENV LOGNAME arcgis # ESRI uses this
 
 # Run the ESRI installer script as user 'arcgis' with these options:
 #   -m silent         silent mode: don't pop up windows, we don't have a screen
@@ -42,10 +43,15 @@ RUN cd ${HOME}/ArcGISServer && ./Setup -m silent --verbose -l yes
 RUN rm -rf ${HOME}/ArcGISServer
 
 # Persist ArcGIS Server's data on the host's file system. Make sure these are writable.
-VOLUME ["${HOME}/server/usr/config-store", "${HOME}/server/usr/directories", "${HOME}/server/usr/logs", "${HOME}/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen"]
+VOLUME ["${HOME}/server/usr/config-store", "${HOME}/server/usr/directories", \
+       "${HOME}/server/usr/logs", \
+       "${HOME}/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen"]
 
 # Start in the arcgis user's home directory.
 WORKDIR ${HOME}
+
+# Change command line prompt
+ADD bashrc ./.bashrc
 
 # Command that will be run by default when you do "docker run" 
 CMD ${HOME}/server/startserver.sh && tail -f ~/server/framework/etc/service_error.log
