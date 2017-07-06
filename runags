@@ -5,17 +5,22 @@
 AGS_FQDN="arcgis.wildsong.biz"
 AGS_NAME="arcgis-server"
 
-# Stop a previous detached server, if any.
+# Stop a previous instance, if any.
+docker stop ${AGS_NAME}
 docker rm ${AGS_NAME}
 
-echo "The command to start AGS is server/startserver.sh"
+echo "Docker is starting in interactive mode."
+echo "Management URL is http://${AGS_FQDN}:6080/arcgis/manager"
+echo "Command to start AGS: \"./server/startserver.sh\""
+echo "Check current license status with: \"./server/tools/authorizeSoftware -s\""
 
 # Start a new server container
-docker run -it --rm --name ${AGS_NAME} --hostname=arcgis.wildsong.biz \
-   --net arcgis-network \
-   -p 6080:6080 -p 6443:6443 \
+docker run -it --rm --name ${AGS_NAME} --hostname=${AGS_FQDN} \
+   --net arcgis-network -p 6080:6080 -p 6443:6443 \
    -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
    -v `pwd`/data/directories:/home/arcgis/server/usr/directories \
    -v `pwd`/data/logs:/home/arcgis/server/usr/logs \
    -v `pwd`/data/sysgen:/home/arcgis/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen \
    geoceg/arcgis-server bash
+
+echo "${AGS_NAME} docker removed."
