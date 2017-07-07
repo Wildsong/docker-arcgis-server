@@ -2,6 +2,9 @@
 Builds an ESRI "ArcGIS Server" Docker image that runs on Ubuntu Server.
 Inspired by the xzdbd/arcgisserver and others.
 
+This page sums up the components in ArcGIS Enterprise:
+https://server.arcgis.com/en/server/latest/administer/linux/inside-an-arcgis-server-site.htm
+
 This procedure facilitates my testing with an ESRI Developer license. I can
 quickly spin up a copy of ArcGIS Server on a local machine and test ideas.
 
@@ -33,8 +36,6 @@ I am using the Developer license, so to create the .prvc file, I went
 to the "my.esri.com" web site, clicked the Developer tab, then clicked
 "Create New Provisioning File" in the left nav bar.
 
-Note that the license file won't be used until running a container.
-
 * Build the image
 
 Now you that you have added the proprietary files in the right place
@@ -45,7 +46,7 @@ you can build an image,
 (My github repo is "geo-ceg", but Docker repo is "geoceg" (no dash).
 This is not a typo, just confusion.)
 
-At the end of the build it will say
+At the end of the build it will something similar to this
 
 ```
 ArcGIS for Server is NOT authorized. You will need to run /home/arcgis/server/tools/authorizeSoftware before using ArcGIS Server 10.5.
