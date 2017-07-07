@@ -1,6 +1,6 @@
 From geoceg/ubuntu-server:latest
 LABEL maintainer="b.wilson@geo-ceg.org"
-ENV REFRESHED_AT 2017-07-03
+ENV REFRESHED_AT 2017-07-06
 
 # Create the user/group who will own the server
 # I set them to my own UID/GID so that the VOLUMES will be read/write
@@ -23,7 +23,8 @@ ADD ArcGIS_Server_Linux_105*.tar.gz ${HOME}
 RUN chown -R arcgis:arcgis ${HOME}
 
 USER arcgis
-ENV LOGNAME arcgis # ESRI uses this
+# ESRI uses this in some scripts (including 'backup')
+ENV LOGNAME arcgis
 
 # Run the ESRI installer script as user 'arcgis' with these options:
 #   -m silent         silent mode: don't pop up windows, we don't have a screen
@@ -42,7 +43,7 @@ RUN cd ${HOME}/ArcGISServer && ./Setup -m silent --verbose -l yes
 # http://server.arcgis.com/en/server/latest/administer/linux/checking-server-diagnostics-using-the-diagnostics-tool.htm
 RUN rm -rf ${HOME}/ArcGISServer
 
-# Persist ArcGIS Server's data on the host's file system. Make sure these are writable.
+# Persist ArcGIS Server's data on the host's file system. Make sure these are writable by container.
 VOLUME ["${HOME}/server/usr/config-store", "${HOME}/server/usr/directories", \
        "${HOME}/server/usr/logs", \
        "${HOME}/server/framework/runtime/.wine/drive_c/Program\ Files/ESRI/License10.5/sysgen"]
