@@ -1,6 +1,6 @@
 # Docker command to start ArcGIS Server in detached mode.
 #
-AGS_FQDN="arcgis.wildsong.biz"
+AGS_FQDN="arcgis.localdomain"
 AGS_NAME="arcgis-server"
 
 # Stop a previous detached server, if any.

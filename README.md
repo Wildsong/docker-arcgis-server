@@ -87,7 +87,7 @@ if there is any benefit in mounting the "directories" volume.
 Running in detached mode (as a daemon); 
 for convenience I keep this command in a script "startags":
 ```
-  docker run -d --name arcgis-server --hostname=arcgis.wildsong.biz \
+  docker run -d --name arcgis-server --hostname=arcgis.localdomain \
   --net arcgis-network \
   -p 6080:6080 -p 6443:6443 \
   -v `pwd`/data/config-store:/home/arcgis/server/usr \
@@ -114,7 +114,7 @@ help you figure out what is wrong. Like this
 
 Run interactively; for convenience I keep this command in a separate script, "runags":
 ```
-  docker run -it --rm --name arcgis-server --hostname=arcgis.wildsong.biz \
+  docker run -it --rm --name arcgis-server --hostname=arcgis.localdomain \
   --net arcgis-network \
   -p 6080:6080 -p 6443:6443 \
   -v `pwd`/data/config-store:/home/arcgis/server/usr/config-store \
@@ -127,7 +127,7 @@ At the command prompt I can start the server and then authorize the server,
 that process looks like this:
 ```
  arcgis@arcgis:~$ hostname
- arcgis.wildsong.biz
+ arcgis.localdomain
  arcgis@arcgis:~$ server/startserver.sh 
  Attempting to start ArcGIS Server... Hostname change detected, updating properties...
  
@@ -164,7 +164,7 @@ that process looks like this:
 
 When ArcGIS Server is up and running you can access the Server Manager
 with a web browser, navigate to
-[https://arcgis.wildsong.biz:6443/arcgis/manager](https://arcgis.wildsong.biz:6443/arcgis/manager).
+[https://arcgis.localdomain:6443/arcgis/manager](https://arcgis.localdomain:6443/arcgis/manager).
 
 If you are running outside a firewall, and you need admin access, it
 is worth noting that the HTTP service running on port 6080 just
